@@ -1,0 +1,15 @@
+﻿<Window x:Class="Dj_Gamer.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Dj_Gamer"
+        mc:Ignorable="d"
+        Title="Settings" Height="500" Width="400" Closing="CloseSettings">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label Content="Mouse sensitivity" FontWeight="Medium" FontSize="15"/>
+            <TextBox Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="15" x:Name="MouseSensitivity"/>
+        </StackPanel>
+    </Grid>
+</Window>

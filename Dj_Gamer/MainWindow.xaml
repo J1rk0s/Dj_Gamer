@@ -1,0 +1,41 @@
+﻿<Window x:Class="Dj_Gamer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:core="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:Dj_Gamer"
+        mc:Ignorable="d"
+        Title="DJ" Height="450" Width="600">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="Keys" MethodName="GetValues" ObjectType="{x:Type core:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type Type="local:VirtualKeys"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="400"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+            <ComboBox x:Name="Devices" Width="150" Height="30" FontSize="15"/>
+            <Button Content="Connect to device" FontSize="15" Width="150" Margin="0,20,0,0" Height="30" Click="ConnectBtn"/>
+            <Button Content="Disconnect" FontSize="15" Width="150" Margin="0,5,0,0" Height="30" Click="DisconnectBtn"/>
+            <Button Content="Save" FontSize="15" Width="150" Margin="0,5,0,0" Height="30" Click="SaveBtn"/>
+            <Button Content="Load preset" FontSize="15" Width="150" Margin="0,5,0,0" Height="30" Click="LoadBtn"/>
+            <Button Content="Record key" FontSize="15" Width="150" Margin="0,5,0,0" Height="30" Click="AddBtn"/>
+            <Button Content="Stop recording" FontSize="15" Width="150" Margin="0,5,0,0" Height="30" Click="StopBtn"/>
+            <Button Content="Debug" FontSize="15" Width="150" Margin="0,5,0,0" Height="30" Click="DebugBtn"/>
+            <Button Content="Settings" FontSize="15" Width="150" Margin="0,5,0,0" Height="30" Click="SettingsBtn"/>
+        </StackPanel>
+        <Label Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10" x:Name="Debug" FontWeight="Medium"/>
+        <DataGrid Grid.Column="1" x:Name="Inputs" ItemsSource="{Binding}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Midi button" IsReadOnly="True" Binding="{Binding MidiKey}"/>
+                <DataGridComboBoxColumn Header="Keycode" SelectedItemBinding="{Binding Key}" ItemsSource="{Binding Source={StaticResource Keys}}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
