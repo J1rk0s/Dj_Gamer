@@ -5,11 +5,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:Dj_Gamer"
         mc:Ignorable="d"
-        Title="Settings" Height="500" Width="400" Closing="CloseSettings">
+        Title="DJ Gamer Settings" Height="500" Width="400" Closing="CloseSettings" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <Label Content="Mouse sensitivity" FontWeight="Medium" FontSize="15"/>
             <TextBox Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="15" x:Name="MouseSensitivity"/>
+            <Label Content="Mouse delay" Margin="0,20,0,0" FontWeight="Medium" FontSize="15"/>
+            <TextBox Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="15" x:Name="MouseDelay"/>
         </StackPanel>
     </Grid>
 </Window>

@@ -5,6 +5,7 @@
         <TargetFramework>net7.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
+        <ApplicationIcon>assets\DJ_gamer_Icon.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,8 +14,11 @@
 
     <ItemGroup>
       <Content Include="bin\Debug\net7.0-windows\UnmanagedUtils.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="assets\6342369.ico" />
+      <None Remove="assets\DJ_gamer_Icon.ico" />
+      <Content Include="assets\DJ_gamer_Icon.ico" />
     </ItemGroup>
 
 </Project>

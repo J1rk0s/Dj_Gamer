@@ -35,9 +35,12 @@ public partial class MainWindow : Window {
         
         if(this._midiIn != null) return;
 
+        Console.WriteLine("Connecting to: " + this.Devices.SelectedItem);
+         
         this._midiIn = new MidiIn(this.Devices.SelectedIndex);
         this._midiIn.MessageReceived += this.OnMessageRecieve;
         this._midiIn.Start();
+        Console.WriteLine("Successfully connected to: " + this.Devices.SelectedItem);
     }
 
     private void DisconnectBtn(object sender, RoutedEventArgs e) {
@@ -45,6 +48,8 @@ public partial class MainWindow : Window {
         
         this._midiIn.Stop();
         this._midiIn.Dispose();
+        this._midiIn = null;
+        Console.WriteLine("Disconnected from device!");
     }
 
     private void OnMessageRecieve(object? sender, MidiInMessageEventArgs args) {
@@ -55,7 +60,7 @@ public partial class MainWindow : Window {
             return;
         }
 
-        if (this._keys.Any(a => a.MidiKey == message)) { // TODO: Get all messages from dj controller and put them in enum or struct to enumerate over later
+        if (this._keys.Any(a => a.MidiKey == message)) { 
             KeyStruct keyN = this._keys.Find(i => i.MidiKey == message)!;
             KeyHandler.SendInput(keyN);
             return;
@@ -65,6 +70,8 @@ public partial class MainWindow : Window {
             KeyStruct keyS = new() {
                 MidiKey = message,
                 Key = VirtualKeys.VK_KEY_A,
+                Delay = 1,
+                Description = "",
             };
             
             this._keys.Add(keyS);
@@ -81,15 +88,14 @@ public partial class MainWindow : Window {
         };
 
         if (dialog.ShowDialog() == true) {
-            using (FileStream stream = (FileStream)dialog.OpenFile()) {
-                JsonSerializer.Serialize(stream, this._keys);   
-            }
+            using FileStream stream = (FileStream)dialog.OpenFile();
+            JsonSerializer.Serialize(stream, this._keys);
         }
     }
 
     private void DebugBtn(object sender, RoutedEventArgs e) {
         this._isDebug = !this._isDebug;
-        this.Debug.Content = "Is debug: " + this._isDebug;
+        this.Debug.Content = this._isDebug ? "Debug mode: " + this._isDebug : "";
     }
 
     private void LoadBtn(object sender, RoutedEventArgs e) {
@@ -102,7 +108,7 @@ public partial class MainWindow : Window {
         if (dialog.ShowDialog() == true) {
             string json = File.ReadAllText(dialog.FileName);
             this._keys = JsonSerializer.Deserialize<List<KeyStruct>>(json)!;
-            Console.WriteLine(this._keys.Count);
+            Console.WriteLine("Preset contained: " + this._keys.Count + " keys");
             this.Inputs.ItemsSource = this._keys;
         }
     }

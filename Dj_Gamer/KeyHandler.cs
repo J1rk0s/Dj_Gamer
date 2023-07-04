@@ -12,20 +12,19 @@ public static class KeyHandler {
     private static readonly int[] _jogs = { 4268720, 4137648, 4268721, 4137649, };
     private static readonly int[] _blacklist = { 8337040, 13968, 8337041, 13961, };
     private static bool _mouseType = false;
-    private static int _mouseSens = 10;
 
-    public static void SetMouseSensitivity(int val) => KeyHandler._mouseSens = val;
-    public static int GetMouseSensitivity() => KeyHandler._mouseSens;
+    public static int MouseSensitivity = 5;
+    public static int MouseDelay = 180;
 
     public static void SendInput(KeyStruct keys) {
         KeyHandler.MouseClicks(keys);
         
-        if (keys.MidiKey == 8345744) {
+        if (keys.Key == VirtualKeys.VK_CHANGE_CONTROL_L) {
             KeyHandler._mouseType = false;
             Console.WriteLine("SetCursorPos ON");
         }
 
-        if (keys.MidiKey == 8345745) {
+        if (keys.Key == VirtualKeys.VK_CHANGE_CONTROL_R) {
             KeyHandler._mouseType = true;
             Console.WriteLine("PostMessage ON");
         }
@@ -40,8 +39,6 @@ public static class KeyHandler {
             return;
         }
         
-        
-
         if (keys.MidiKey > 8_000_000) {
             KeyHandler.KeyboardInput(keys, 0);
             return;
@@ -54,7 +51,7 @@ public static class KeyHandler {
         switch (keys.Key) {
             case VirtualKeys.VK_LBUTTON:
                 Console.WriteLine("L DOWN");
-                KeyHandler._mouseTLeft = new Thread(Winapi.ClickLeftDown);
+                KeyHandler._mouseTLeft = new Thread(() => Winapi.ClickLeftDown(KeyHandler.MouseDelay));
                 KeyHandler._mouseTLeft.Start();
                 break;
             case VirtualKeys.VK_LBUTTONUP:
@@ -63,7 +60,7 @@ public static class KeyHandler {
                 break;
             case VirtualKeys.VK_RBUTTON:
                 Console.WriteLine("R DOWN");
-                KeyHandler._mouseTRight = new Thread(Winapi.ClickRightDown);
+                KeyHandler._mouseTRight = new Thread(() => Winapi.ClickRightDown(KeyHandler.MouseDelay));
                 KeyHandler._mouseTRight.Start();
                 break;
             case VirtualKeys.VK_RBUTTONUP:
@@ -75,10 +72,14 @@ public static class KeyHandler {
 
     private static void KeyboardInput(KeyStruct keys, int type) {
         Winapi.InitKeys((ushort)keys.Key);
+        if (keys.Delay == 0) {
+            keys.Delay = 1;
+        }
+        
         switch (type) {
             case 0:
                 Console.WriteLine("Pushing down");
-                KeyHandler._t = new Thread(Winapi.PushDown);
+                KeyHandler._t = new Thread(() => Winapi.PushDown(keys.Delay));
                 KeyHandler._t.Start();
                 break;
             case 1:
@@ -89,6 +90,7 @@ public static class KeyHandler {
                 Winapi.ShowMessage();
                 break;
         }
+        Winapi.PushUp();
     }
 
     private static void MouseInput(KeyStruct keys) {
@@ -97,9 +99,9 @@ public static class KeyHandler {
 
         //Console.WriteLine(p);
         
-        switch (keys.MidiKey) {
-            case 4137648:
-                p.X -= KeyHandler._mouseSens;
+        switch (keys.Key) {
+            case VirtualKeys.VK_JOGS_LR:
+                p.X -= KeyHandler.MouseSensitivity;
                 if (KeyHandler._mouseType) {
                     Winapi.mouse_event(Winapi.Constants.MOUSEEVENTF_MOVE, p.X - pStatic.X, p.Y - pStatic.Y, 0, 0);
                     break;
@@ -107,8 +109,8 @@ public static class KeyHandler {
                 
                 Winapi.SetCursorPos(p.X,p.Y);
                 break;
-            case 4268720:
-                p.X += KeyHandler._mouseSens;
+            case VirtualKeys.VK_JOGS_LL:
+                p.X += KeyHandler.MouseSensitivity;
                 if (KeyHandler._mouseType) {
                     Winapi.mouse_event(Winapi.Constants.MOUSEEVENTF_MOVE, p.X - pStatic.X, p.Y - pStatic.Y, 0, 0);
                     break;
@@ -116,8 +118,8 @@ public static class KeyHandler {
                 
                 Winapi.SetCursorPos(p.X,p.Y);
                 break;
-            case 4137649:
-                p.Y += KeyHandler._mouseSens;
+            case VirtualKeys.VK_JOGS_RR:
+                p.Y += KeyHandler.MouseSensitivity;
                 if (KeyHandler._mouseType) {
                     Winapi.mouse_event(Winapi.Constants.MOUSEEVENTF_MOVE, p.X - pStatic.X, p.Y - pStatic.Y, 0, 0);
                     break;
@@ -125,8 +127,8 @@ public static class KeyHandler {
                 
                 Winapi.SetCursorPos(p.X,p.Y);
                 break;
-            case 4268721:
-                p.Y -= KeyHandler._mouseSens;
+            case VirtualKeys.VK_JOGS_RL:
+                p.Y -= KeyHandler.MouseSensitivity;
                 if (KeyHandler._mouseType) {
                     Winapi.mouse_event(Winapi.Constants.MOUSEEVENTF_MOVE, p.X - pStatic.X, p.Y - pStatic.Y, 0, 0);
                     break;
@@ -150,7 +152,7 @@ public static class KeyHandler {
         }
         
         [DllImport("UnmanagedUtils.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void PushDown();
+        public static extern void PushDown(int delay = 1);
         
         [DllImport("UnmanagedUtils.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PushUp();
@@ -162,13 +164,13 @@ public static class KeyHandler {
         public static extern void ShowMessage();
 
         [DllImport("UnmanagedUtils.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void ClickLeftDown();
+        public static extern void ClickLeftDown(int delay = 1);
         
         [DllImport("UnmanagedUtils.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ClickLeftUp();
         
         [DllImport("UnmanagedUtils.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void ClickRightDown();
+        public static extern void ClickRightDown(int delay = 1);
         
         [DllImport("UnmanagedUtils.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ClickRightUp();
